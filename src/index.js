@@ -7,6 +7,9 @@ import axios from "axios";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+// 도메인이 다르니 쿠키값도 같이 보내줘야함..!
+axios.defaults.withCredentials = true;
+
 const StoreContext = React.createContext("");
 
 const initState = {
@@ -80,6 +83,24 @@ const Test2 = React.memo(() => {
         }}
       >
         다운로드
+      </button>
+
+      <button
+        onClick={() => {
+          axios.post("http://localhost:4000/login", {
+            id: "zz",
+            pw: "zz123",
+          });
+        }}
+      >
+        로그인
+      </button>
+      <button
+        onClick={() => {
+          axios.get("http://localhost:4000/login");
+        }}
+      >
+        세션확인
       </button>
     </div>
   );

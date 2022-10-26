@@ -7,13 +7,26 @@ const multer = require("multer");
 const path = require("path");
 const mime = require("mime");
 
+const session = require("express-session");
+const fileStore = require("session-file-store")(session);
+
 const port = 4000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use(
+  session({
+    secret: "this",
+    resave: false,
+    saveUninitialize: true,
+    // store: new fileStore(), // 세션 객체에 세션스토어를 적용
+  })
+);
 app.use(
   cors({
     origin: true,
+    credentials: true,
   })
 );
 
@@ -69,6 +82,25 @@ app.get("/photo", (req, res) => {
 
 app.get("/", (req, res) => {
   res.send("hello");
+});
+
+app.post("/login", (req, res) => {
+  const { id, pw } = req.body;
+
+  req.session.loginUser = {
+    id: id,
+    pw: pw,
+  };
+
+  console.log(req.session.loginUser);
+
+  res.send("zz");
+});
+
+app.get("/login", (req, res) => {
+  console.log(req.session);
+
+  res.send("zz");
 });
 
 app.get("/add/products", (req, res) => {
