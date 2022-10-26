@@ -9,12 +9,13 @@ const mime = require("mime");
 
 const session = require("express-session");
 const fileStore = require("session-file-store")(session);
+const cookieParser = require("cookie-parser");
 
 const port = 4000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(cookieParser());
 app.use(
   session({
     secret: "this",
@@ -30,13 +31,17 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  console.log("나먼저됨!", req.session);
+
+  next();
+});
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
   },
   filename: function (req, file, cb) {
-    console.log(file);
-
     cb(null, file.fieldname + "_" + Date.now() + ".png");
   },
 });
@@ -92,27 +97,22 @@ app.post("/login", (req, res) => {
     pw: pw,
   };
 
-  console.log(req.session.loginUser);
+  console.log("login");
 
   res.send("zz");
 });
 
 app.get("/login", (req, res) => {
-  console.log(req.session);
-
   res.send("zz");
 });
 
 app.get("/add/products", (req, res) => {
-  console.log(req.query);
-
   res.send("/");
 });
 
 app.get("/products", (req, res) => {});
 
 app.listen(port, (req, res) => {
-  console.log("?");
   const dir = "./uploads";
 
   if (!fs.existsSync(dir)) {
