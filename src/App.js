@@ -2,6 +2,8 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
+import axios from "axios";
+
 const Test = React.memo(() => {
   console.log("Hello Test Component..");
   return <div>Test</div>;
@@ -27,14 +29,11 @@ function App() {
     },
   ]);
 
-  const [myCart, setMyCart] = React.useState();
+  const [myCart, setMyCart] = React.useState([]);
   const [showModal, setShowModal] = React.useState({
     show: false,
     image: null,
   });
-
-  let [x, setX] = React.useState(0);
-  let [y, setY] = React.useState(0);
 
   React.useEffect(() => {
     const handleModal = (event) => {
@@ -50,28 +49,8 @@ function App() {
     };
   }, []);
 
-  const a = React.useCallback(() => {
-    console.log(y);
-  }, [x]);
-
-  a();
-
   return (
     <div className="App">
-      <button
-        onClick={() => {
-          setX((x += 1));
-        }}
-      >
-        X {x}
-      </button>
-      <button
-        onClick={() => {
-          setY((y += 1));
-        }}
-      >
-        Y {y}
-      </button>
       <div className="wrapper">
         <div className="screen -left">
           <img
@@ -102,7 +81,34 @@ function App() {
                         </div>
                         <div className="name">{item.name}</div>
                         <div className="description">{item.descrition}</div>
-                        <div className="bottom-area">
+                        <div
+                          className="bottom-area"
+                          onClick={async () => {
+                            const cloneMyCart = [...myCart];
+
+                            const 이미갖고있는상품 = cloneMyCart.find(
+                              (_item) => {
+                                return _item.name === item.name;
+                              }
+                            );
+
+                            if (이미갖고있는상품) {
+                              return;
+                            }
+
+                            await axios({
+                              url: "http://localhost:4000/add/products",
+                              params: item,
+                            })
+                              .then((res) => {})
+                              .catch((e) => {
+                                console.log(e);
+                              });
+
+                            cloneMyCart.push(item);
+                            setMyCart(cloneMyCart);
+                          }}
+                        >
                           <div className="price">{item.price}</div>
                           <div className="button">
                             <p>ADD TO CART</p>
@@ -147,8 +153,11 @@ function App() {
                         <div className="description">{item.descrition}</div>
                         <div className="bottom-area">
                           <div className="price">{item.price}</div>
-                          <div className="button">
-                            <p>ADD TO CART</p>
+                          <div
+                            className="button"
+                            style={{ backgroundColor: "red", color: "#fff" }}
+                          >
+                            <p>REMOVE</p>
                           </div>
                         </div>
                       </div>
