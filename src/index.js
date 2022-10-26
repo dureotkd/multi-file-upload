@@ -63,11 +63,23 @@ const Test2 = React.memo(() => {
       </button>
       <button
         type="button"
-        onClick={() => {
-          setA("b");
+        onClick={async () => {
+          window.location.href =
+            "http://localhost:4000/photo?fileName=file_1666765529951.png";
+
+          // await axios
+          //   .get("http://localhost:4000/photo", {
+          //     params: {
+          //       fileName: "file_1666765529951.png",
+          //     },
+          //     responseType :
+          //   })
+          //   .then((res) => {
+          //     alert("z");
+          //   });
         }}
       >
-        그냥 렌더링?
+        다운로드
       </button>
     </div>
   );
